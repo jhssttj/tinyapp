@@ -11,13 +11,13 @@ const urlDatabase = {
 };
 
 function generateRandomString() {
-  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = ' ';
-  for ( let i = 0; i < 6; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+  for (let i = 0; i < 6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
-};
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -32,7 +32,7 @@ app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const siteID = generateRandomString();
   urlDatabase[siteID] = req.body.longURL;
-  res.redirect(`/urls/${siteID}`)
+  res.redirect(`/urls/${siteID}`);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -53,7 +53,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  // const longURL = ...
+  const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 
