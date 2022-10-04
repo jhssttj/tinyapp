@@ -59,10 +59,8 @@ app.get("/u/:id", (req, res) => {
 });
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  const siteID = generateRandomString();
-  urlDatabase[siteID] = req.body.longURL;
-  res.redirect(`/urls/${siteID}`);
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
 });
 
 app.listen(PORT, () => {
