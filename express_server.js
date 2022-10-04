@@ -35,6 +35,12 @@ app.post("/urls", (req, res) => {
   urlDatabase[siteID] = req.body.longURL;
   res.redirect(`/urls/${siteID}`);
 });
+//Once edited, update the long URL
+app.post("/urls/:id", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  urlDatabase[req.params.id] = req.body.editURL;
+  res.redirect(`/urls/${req.params.id}`);
+});
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
