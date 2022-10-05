@@ -30,19 +30,6 @@ app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase, username: req.cookies["username"]};
   res.render("urls_index", templateVars);
 });
-//Creates new URL and short code for it
-app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  const siteID = generateRandomString();
-  urlDatabase[siteID] = req.body.longURL;
-  res.redirect(`/urls/${siteID}`);
-});
-//Once edited, update the long URL
-app.post("/urls/:id", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  urlDatabase[req.params.id] = req.body.editURL;
-  res.redirect(`/urls/${req.params.id}`);
-});
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
   const templateVars = {username: req.cookies["username"]};
@@ -65,6 +52,19 @@ app.get("/hello", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
+});
+//Creates new URL and short code for it
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  const siteID = generateRandomString();
+  urlDatabase[siteID] = req.body.longURL;
+  res.redirect(`/urls/${siteID}`);
+});
+//Once edited, update the long URL
+app.post("/urls/:id", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  urlDatabase[req.params.id] = req.body.editURL;
+  res.redirect(`/urls/${req.params.id}`);
 });
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
