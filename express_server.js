@@ -12,6 +12,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = ' ';
@@ -74,6 +87,17 @@ app.post("/urls/:id", (req, res) => {
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+});
+//Put register info into database
+app.post("/register", (req, res) => {
+  const userID = generateRandomString();
+  let userObj = {};
+  userObj.id = userID;
+  userObj.email = req.body.email;
+  userObj.password = req.body.password;
+  users[userID] = userObj;
+  res.cookie("user_id", userID);
   res.redirect('/urls');
 });
 //Login Button logs you in and redirect back to URL page
