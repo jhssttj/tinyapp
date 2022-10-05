@@ -43,7 +43,6 @@ const findUserByEmail = (email) => {
       return userId;
     }
   }
-
   return null;
 };
 
@@ -59,6 +58,9 @@ app.get("/urls", (req, res) => {
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
   const templateVars = {userInfo: users[req.cookies["user_id"]]};
+  if (!req.cookies["user_id"]) {
+    return res.redirect("/login")
+  }
   res.render("urls_new", templateVars);
 });
 //Directs to register page
@@ -93,12 +95,18 @@ app.get("/hello", (req, res) => {
 //Clicking on this link directs to the actual website the URL is linked to
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
+  if (!longURL) {
+    return res.status(404).send("Shortened URL does not exist in database");
+  }
   res.redirect(longURL);
 });
 //Creates new URL and short code for it
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const siteID = generateRandomString();
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("You cannot shorten a URL link because you are not logged in");
+  }
   urlDatabase[siteID] = req.body.longURL;
   res.redirect(`/urls/${siteID}`);
 });
