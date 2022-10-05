@@ -9,8 +9,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 const users = {
@@ -53,6 +59,9 @@ app.get("/", (req, res) => {
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlDatabase, userInfo: users[req.cookies["user_id"]]};
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("Must log in to access URL list");
+  }
   res.render("urls_index", templateVars);
 });
 //New URL page: Input new url to add to the database
@@ -81,7 +90,7 @@ app.get("/login", (req, res) => {
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], userInfo: users[req.cookies["user_id"]] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]['longURL'], userInfo: users[req.cookies["user_id"]] };
   res.render("urls_show", templateVars);
 });
 //URL Json page
@@ -98,7 +107,7 @@ app.get("/u/:id", (req, res) => {
   if (!longURL) {
     return res.status(404).send("Shortened URL does not exist in database");
   }
-  res.redirect(longURL);
+  res.redirect(longURL['longURL']);
 });
 //Creates new URL and short code for it
 app.post("/urls", (req, res) => {
@@ -107,13 +116,16 @@ app.post("/urls", (req, res) => {
   if (!req.cookies["user_id"]) {
     return res.status(401).send("You cannot shorten a URL link because you are not logged in");
   }
-  urlDatabase[siteID] = req.body.longURL;
+  if (!urlDatabase[siteID]) {
+    urlDatabase[siteID] = {};
+  }
+  urlDatabase[siteID].longURL = req.body.longURL;
   res.redirect(`/urls/${siteID}`);
 });
 //Once edited, update the long URL
 app.post("/urls/:id", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  urlDatabase[req.params.id] = req.body.editURL;
+  urlDatabase[req.params.id].longURL = req.body.editURL;
   res.redirect(`/urls/${req.params.id}`);
 });
 //Delete requested URL once the delete button is clicked
