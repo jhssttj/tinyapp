@@ -40,22 +40,22 @@ app.get("/", (req, res) => {
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase, username: req.cookies["username"]};
+  const templateVars = {urls: urlDatabase, username: users[req.cookies["user_id"]]};
   res.render("urls_index", templateVars);
 });
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]};
+  const templateVars = {username: users[req.cookies["user_id"]]};
   res.render("urls_new", templateVars);
 });
 //Directs to register page
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const templateVars = { username: users[req.cookies["user_id"]] };
   res.render("register", templateVars);
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: users[req.cookies["user_id"]] };
   res.render("urls_show", templateVars);
 });
 //URL Json page
@@ -107,7 +107,7 @@ app.post("/login", (req, res) => {
 });
 //Logout Button to log you out
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 

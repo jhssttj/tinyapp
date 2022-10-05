@@ -34,8 +34,8 @@
         </div>
       </form>
     <% } else{ %>  
-      <a>Logged in as: <%= username %></a>
       <form class="form-inline" action="/logout" method="POST">
+        <a>Logged in as: <%= username.email %></a>
         <div class="form-group mb-2" style = "margin: 0 auto" >
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Logout</button>
         </div>
