@@ -39,7 +39,7 @@ const findUserByEmail = (email) => {
     const userFromDb = users[userId];
     if (userFromDb.email === email) {
       // we found our user
-      return userFromDb;
+      return userId;
     }
   }
 
@@ -64,6 +64,11 @@ app.get("/urls/new", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { username: users[req.cookies["user_id"]] };
   res.render("register", templateVars);
+});
+//Directs to login page
+app.get("/login", (req, res) => {
+  const templateVars = { username: users[req.cookies["user_id"]] };
+  res.render("login", templateVars);
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
@@ -116,12 +121,13 @@ app.post("/register", (req, res) => {
   userObj.email = req.body.email;
   userObj.password = req.body.password;
   users[userID] = userObj;
+  console.log(users);
   res.cookie("user_id", userID);
   res.redirect('/urls');
 });
 //Login Button logs you in and redirect back to URL page
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  res.cookie('user_id', findUserByEmail(req.body.email))
   res.redirect('/urls');
 });
 //Logout Button to log you out

@@ -16,22 +16,19 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <a class="nav-item nav-link" href="/register">Create New Account</a>
       </div>
     </div>
 
     <% if(!username){ %>
-      <form class="form-inline" action="/login" method="POST">
+      <form class="form-inline" action="/login" method="GET">
         <div class="form-group mb-2" style = "margin: 0 auto" >
           <label for="username"></label>
-          <input
-            class="form-control"
-            type="text"
-            name="username"
-            placeholder="Username"
-            style="width: 150px; margin: 1em; margin: 0 auto; text-align:center "
-          />
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black' >Login</button>
+        </div>
+      </form>
+      <form class="form-inline" action="/register" method="GET">
+        <div class="form-group mb-2" style = "margin: 0 auto" >
+          <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Register</button>
         </div>
       </form>
     <% } else{ %>  
@@ -39,6 +36,11 @@
         <a>Logged in as: <%= username.email %></a>
         <div class="form-group mb-2" style = "margin: 0 auto" >
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Logout</button>
+        </div>
+      </form>
+      <form class="form-inline" action="/register" method="GET">
+        <div class="form-group mb-2" style = "margin: 0 auto" >
+          <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Register</button>
         </div>
       </form>
    <% } %>
