@@ -34,6 +34,18 @@ function generateRandomString() {
   return result;
 }
 
+const findUserByEmail = (email) => {
+  for (const userId in users) {
+    const userFromDb = users[userId];
+    if (userFromDb.email === email) {
+      // we found our user
+      return userFromDb;
+    }
+  }
+
+  return null;
+};
+
 //Homepage: A hello messsage
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -92,7 +104,14 @@ app.post("/urls/:id/delete", (req, res) => {
 //Put register info into database
 app.post("/register", (req, res) => {
   const userID = generateRandomString();
+  const currentUser = findUserByEmail(req.body.email);
   let userObj = {};
+  if (req.body.email === '' || req.body.password === '') {
+    return res.status(400).send("Cannot have empty email/password input");
+  }
+  if(currentUser){
+    return res.status(400).send('Email already in use');
+  }
   userObj.id = userID;
   userObj.email = req.body.email;
   userObj.password = req.body.password;
