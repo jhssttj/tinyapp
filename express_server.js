@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const e = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -52,27 +53,27 @@ app.get("/", (req, res) => {
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase, username: users[req.cookies["user_id"]]};
+  const templateVars = {urls: urlDatabase, userInfo: users[req.cookies["user_id"]]};
   res.render("urls_index", templateVars);
 });
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: users[req.cookies["user_id"]]};
+  const templateVars = {userInfo: users[req.cookies["user_id"]]};
   res.render("urls_new", templateVars);
 });
 //Directs to register page
 app.get("/register", (req, res) => {
-  const templateVars = { username: users[req.cookies["user_id"]] };
+  const templateVars = { userInfo: users[req.cookies["user_id"]] };
   res.render("register", templateVars);
 });
 //Directs to login page
 app.get("/login", (req, res) => {
-  const templateVars = { username: users[req.cookies["user_id"]] };
+  const templateVars = { userInfo: users[req.cookies["user_id"]] };
   res.render("login", templateVars);
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: users[req.cookies["user_id"]] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], userInfo: users[req.cookies["user_id"]] };
   res.render("urls_show", templateVars);
 });
 //URL Json page
@@ -127,7 +128,14 @@ app.post("/register", (req, res) => {
 });
 //Login Button logs you in and redirect back to URL page
 app.post("/login", (req, res) => {
-  res.cookie('user_id', findUserByEmail(req.body.email))
+  const currentUser = findUserByEmail(req.body.email);
+  if (!currentUser) {
+    return res.status(403).send("Email cannot be found");
+  }
+  if (currentUser && users[currentUser].password !== req.body.password) {
+    return res.status(403).send("Incorrect password");
+  }
+  res.cookie('user_id', currentUser)
   res.redirect('/urls');
 });
 //Logout Button to log you out
