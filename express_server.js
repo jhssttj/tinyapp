@@ -46,7 +46,7 @@ const findUserByEmail = (email) => {
   return null;
 };
 
-//Homepage: A hello messsage
+//Homepage: A hello messsage - LIKELY CAN DELETE AT END
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
