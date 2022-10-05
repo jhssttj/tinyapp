@@ -64,11 +64,17 @@ app.get("/urls/new", (req, res) => {
 //Directs to register page
 app.get("/register", (req, res) => {
   const templateVars = { userInfo: users[req.cookies["user_id"]] };
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls")
+  }
   res.render("register", templateVars);
 });
 //Directs to login page
 app.get("/login", (req, res) => {
   const templateVars = { userInfo: users[req.cookies["user_id"]] };
+  if (req.cookies["user_id"]) {
+    return res.redirect("/urls")
+  }
   res.render("login", templateVars);
 });
 //Specific URL page
