@@ -35,6 +35,11 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {username: req.cookies["username"]};
   res.render("urls_new", templateVars);
 });
+//Directs to register page
+app.get("/register", (req, res) => {
+  const templateVars = { username: req.cookies["username"] };
+  res.render("register", templateVars);
+});
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
@@ -81,6 +86,7 @@ app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
