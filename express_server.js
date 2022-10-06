@@ -135,7 +135,6 @@ app.post("/urls", (req, res) => {
   }
   urlDatabase[siteID].longURL = req.body.longURL;
   urlDatabase[siteID].userID = req.cookies["user_id"];
-  console.log(urlDatabase);
   res.redirect(`/urls/${siteID}`);
 });
 //Once edited, update the long URL
