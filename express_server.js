@@ -30,7 +30,7 @@ const users = {
     password: "dishwasher-funk",
   },
 };
-
+//Function to generate random 6 digit string
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -39,7 +39,7 @@ function generateRandomString() {
   }
   return result;
 }
-
+//Function to find email if in database
 const findUserByEmail = (email) => {
   for (const userId in users) {
     const userFromDb = users[userId];
@@ -50,7 +50,7 @@ const findUserByEmail = (email) => {
   }
   return null;
 };
-
+//Function to filter url based on unique user id
 const urlsForUser = (id) => {
   let finalObj = {};
   for (const shortURL in urlDatabase) {
