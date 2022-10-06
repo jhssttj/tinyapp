@@ -1,5 +1,4 @@
 const express = require("express");
-// const cookieParser = require('cookie-parser'); NO LONGER NEEDED CAN DELETE
 const cookieSession = require('cookie-session');
 const { findUserByEmail } = require('./helpers');
 const app = express();
@@ -8,7 +7,6 @@ const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-// app.use(cookieParser()); NO LONGER NEEDED CAN DELETE
 app.use(cookieSession({
   name: 'tinyApp',
   keys: ['secret'],
@@ -61,9 +59,13 @@ const urlsForUser = (id) => {
   return finalObj;
 };
 
-//Homepage: A hello messsage - LIKELY CAN DELETE AT END
+//Homepage: Directs to login page if not logged in or to URL page if logged in
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const templateVars = { userInfo: users[req.session.user_id] };
+  if (req.session.user_id) {
+    return res.redirect("/urls")
+  }
+  res.render("login", templateVars);
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
@@ -101,13 +103,13 @@ app.get("/login", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const specificURL = urlsForUser(req.session.user_id)
   if (!urlDatabase[req.params.id]) {
-    return res.status(404).send("Cannot delete Id:Id does not exist");
+    return res.status(404).send("Cannot access: Id does not exist");
   }
   if (!req.session.user_id) {
-    return res.status(401).send("Cannot delete: Not logged in currently");
+    return res.status(401).send("Cannot access: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
-    return res.status(401).send("Specific URL link not found");
+    return res.status(401).send("Cannot access: Specific URL link is not bounded to this user Id");
   } else {
     const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]['longURL'], userInfo: users[req.session.user_id] };
     res.render("urls_show", templateVars);
@@ -117,21 +119,16 @@ app.get("/urls/:id", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-//Test page - LIKELY CAN DELETE AT END
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 //Clicking on this link directs to the actual website the URL is linked to
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   if (!longURL) {
-    return res.status(404).send("Shortened URL does not exist in database");
+    return res.status(404).send("Cannot access: This URL code does not exist in database");
   }
   res.redirect(longURL['longURL']);
 });
 //Creates new URL and short code for it
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
   const siteID = generateRandomString();
   if (!req.session.user_id) {
     return res.status(401).send("You cannot shorten a URL link because you are not logged in");
@@ -147,13 +144,13 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const specificURL = urlsForUser(req.session.user_id);
   if (!urlDatabase[req.params.id]) {
-    return res.status(404).send("Cannot delete Id:Id does not exist");
+    return res.status(404).send("Cannot edit Id:Id does not exist");
   }
   if (!req.session.user_id) {
-    return res.status(401).send("Cannot delete: Not logged in currently");
+    return res.status(401).send("Cannot edit: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
-    return res.status(401).send("Unauthorized to delete: This URL doesn't belong to this account");
+    return res.status(401).send("Unauthorized to edit: This URL doesn't belong to this account");
   }
   urlDatabase[req.params.id].longURL = req.body.editURL;
   res.redirect(`/urls/${req.params.id}`);
@@ -183,7 +180,7 @@ app.get("/urls/:id/delete", (req, res) => {
     return res.status(401).send("Cannot delete: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
-    return res.status(401).send("Unauthorized to delete");
+    return res.status(401).send("Cannot delete: Unauthorized to delete as you are not the owner of this url link");
   }
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
@@ -197,13 +194,12 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Cannot have empty email/password input");
   }
   if(currentUser){
-    return res.status(400).send('Email already in use');
+    return res.status(400).send('Cannot register: Email already in use');
   }
   userObj.id = userID;
   userObj.email = req.body.email;
   userObj.password = bcrypt.hashSync(req.body.password, 10);
   users[userID] = userObj;
-  // res.cookie("user_id", userID);
   req.session.user_id = userID;
   res.redirect('/urls');
 });
@@ -211,18 +207,16 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const currentUser = findUserByEmail(req.body.email, users);
   if (!currentUser) {
-    return res.status(403).send("Email cannot be found");
+    return res.status(403).send("Cannot login: Email cannot be found");
   }
   if (currentUser && !bcrypt.compareSync(req.body.password, users[currentUser].password)) {
-    return res.status(403).send("Incorrect password");
+    return res.status(403).send("Cannot login: Incorrect password");
   }
-  // res.cookie('user_id', currentUser)
   req.session.user_id = currentUser;
   res.redirect('/urls');
 });
 //Logout Button to log you out
 app.post("/logout", (req, res) => {
-  // res.clearCookie('user_id');
   req.session = null;
   res.redirect('/urls');
 });
