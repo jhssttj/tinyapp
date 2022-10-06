@@ -1,6 +1,7 @@
 const express = require("express");
 // const cookieParser = require('cookie-parser'); NO LONGER NEEDED CAN DELETE
 const cookieSession = require('cookie-session');
+const { findUserByEmail } = require('./helpers');
 const app = express();
 const bcrypt = require('bcryptjs');
 const PORT = 8080; // default port 8080
@@ -48,17 +49,7 @@ function generateRandomString() {
   }
   return result;
 }
-//Function to find email if in database
-const findUserByEmail = (email, database) => {
-  for (const userId in database) {
-    const userFromDb = database[userId];
-    if (userFromDb.email === email) {
-      // we found our user
-      return userId;
-    }
-  }
-  return null;
-};
+
 //Function to filter url based on unique user id
 const urlsForUser = (id) => {
   let finalObj = {};
