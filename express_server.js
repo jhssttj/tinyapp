@@ -76,49 +76,49 @@ app.get("/", (req, res) => {
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlsForUser(req.cookies["user_id"]), userInfo: users[req.cookies["user_id"]]};
-  if (!req.cookies["user_id"]) {
+  const templateVars = {urls: urlsForUser(req.session.user_id), userInfo: users[req.session.user_id]};
+  if (!req.session.user_id) {
     return res.status(401).render("login_error",templateVars)
   }
   res.render("urls_index", templateVars);
 });
 //New URL page: Input new url to add to the database
 app.get("/urls/new", (req, res) => {
-  const templateVars = {userInfo: users[req.cookies["user_id"]]};
-  if (!req.cookies["user_id"]) {
+  const templateVars = {userInfo: users[req.session.user_id]};
+  if (!req.session.user_id) {
     return res.redirect("/login")
   }
   res.render("urls_new", templateVars);
 });
 //Directs to register page
 app.get("/register", (req, res) => {
-  const templateVars = { userInfo: users[req.cookies["user_id"]] };
-  if (req.cookies["user_id"]) {
+  const templateVars = { userInfo: users[req.session.user_id] };
+  if (req.session.user_id) {
     return res.redirect("/urls")
   }
   res.render("register", templateVars);
 });
 //Directs to login page
 app.get("/login", (req, res) => {
-  const templateVars = { userInfo: users[req.cookies["user_id"]] };
-  if (req.cookies["user_id"]) {
+  const templateVars = { userInfo: users[req.session.user_id] };
+  if (req.session.user_id) {
     return res.redirect("/urls")
   }
   res.render("login", templateVars);
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const specificURL = urlsForUser(req.cookies["user_id"])
+  const specificURL = urlsForUser(req.session.user_id)
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.status(401).send("Cannot delete: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
     return res.status(401).send("Specific URL link not found");
   } else {
-    const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]['longURL'], userInfo: users[req.cookies["user_id"]] };
+    const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]['longURL'], userInfo: users[req.session.user_id] };
     res.render("urls_show", templateVars);
   }
 });
@@ -142,23 +142,23 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const siteID = generateRandomString();
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.status(401).send("You cannot shorten a URL link because you are not logged in");
   }
   if (!urlDatabase[siteID]) {
     urlDatabase[siteID] = {};
   }
   urlDatabase[siteID].longURL = req.body.longURL;
-  urlDatabase[siteID].userID = req.cookies["user_id"];
+  urlDatabase[siteID].userID = req.session.user_id;
   res.redirect(`/urls/${siteID}`);
 });
 //Once edited, update the long URL
 app.post("/urls/:id", (req, res) => {
-  const specificURL = urlsForUser(req.cookies["user_id"]);
+  const specificURL = urlsForUser(req.session.user_id);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.status(401).send("Cannot delete: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
@@ -169,11 +169,11 @@ app.post("/urls/:id", (req, res) => {
 });
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
-  const specificURL = urlsForUser(req.cookies["user_id"]);
+  const specificURL = urlsForUser(req.session.user_id);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.status(401).send("Cannot delete: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
@@ -184,11 +184,11 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 //Delete page
 app.get("/urls/:id/delete", (req, res) => {
-  const specificURL = urlsForUser(req.cookies["user_id"]);
+  const specificURL = urlsForUser(req.session.user_id);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     return res.status(401).send("Cannot delete: Not logged in currently");
   }
   if (!specificURL[req.params.id]) {
