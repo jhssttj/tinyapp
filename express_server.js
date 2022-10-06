@@ -34,7 +34,7 @@ const users = {
 
 function generateRandomString() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = ' ';
+  let result = '';
   for (let i = 0; i < 6; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
@@ -52,13 +52,23 @@ const findUserByEmail = (email) => {
   return null;
 };
 
+const urlsForUser = (id) => {
+  let finalObj = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      finalObj[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return finalObj;
+};
+
 //Homepage: A hello messsage - LIKELY CAN DELETE AT END
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlDatabase, userInfo: users[req.cookies["user_id"]]};
+  const templateVars = {urls: urlsForUser(req.cookies["user_id"]), userInfo: users[req.cookies["user_id"]]};
   if (!req.cookies["user_id"]) {
     return res.status(401).send("Must log in to access URL list");
   }
@@ -90,7 +100,11 @@ app.get("/login", (req, res) => {
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
+  const specificURL = urlsForUser(req.cookies["user_id"])
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]['longURL'], userInfo: users[req.cookies["user_id"]] };
+  if (!specificURL[req.params.id]) {
+    return res.status(401).send("Specific URL link not found");
+  }
   res.render("urls_show", templateVars);
 });
 //URL Json page
@@ -120,6 +134,8 @@ app.post("/urls", (req, res) => {
     urlDatabase[siteID] = {};
   }
   urlDatabase[siteID].longURL = req.body.longURL;
+  urlDatabase[siteID].userID = req.cookies["user_id"];
+  console.log(urlDatabase);
   res.redirect(`/urls/${siteID}`);
 });
 //Once edited, update the long URL
