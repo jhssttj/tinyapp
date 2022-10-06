@@ -69,7 +69,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlsForUser(req.cookies["user_id"]), userInfo: users[req.cookies["user_id"]]};
   if (!req.cookies["user_id"]) {
-    return res.status(401).send("Must log in to access URL list");
+    return res.status(401).render("login_error",templateVars)
   }
   res.render("urls_index", templateVars);
 });
