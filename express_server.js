@@ -1,12 +1,20 @@
 const express = require("express");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser'); NO LONGER NEEDED CAN DELETE
+const cookieSession = require('cookie-session');
 const app = express();
 const bcrypt = require('bcryptjs');
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+// app.use(cookieParser()); NO LONGER NEEDED CAN DELETE
+app.use(cookieSession({
+  name: 'tinyApp',
+  keys: ['secret'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 
 const urlDatabase = {
   b6UTxQ: {
@@ -204,7 +212,8 @@ app.post("/register", (req, res) => {
   userObj.email = req.body.email;
   userObj.password = bcrypt.hashSync(req.body.password, 10);
   users[userID] = userObj;
-  res.cookie("user_id", userID);
+  // res.cookie("user_id", userID);
+  req.session.user_id = userID;
   res.redirect('/urls');
 });
 //Login Button logs you in and redirect back to URL page
@@ -216,12 +225,14 @@ app.post("/login", (req, res) => {
   if (currentUser && !bcrypt.compareSync(req.body.password, users[currentUser].password)) {
     return res.status(403).send("Incorrect password");
   }
-  res.cookie('user_id', currentUser)
+  // res.cookie('user_id', currentUser)
+  req.session.user_id = currentUser;
   res.redirect('/urls');
 });
 //Logout Button to log you out
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  // res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
