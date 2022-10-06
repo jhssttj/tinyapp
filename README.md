@@ -4,9 +4,10 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Tinyapp URL main page (List of short and long URLs linked to the user."](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-page.PNG?raw=true)
-!["Tinyapp URL new page (Add URL link to create a shortened URL link."](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-new.PNG?raw=true)
-!["Tinyapp URL edit page (Update current shortened URL link to direct to different long URL link."](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-edit.PNG?raw=true)
+!["Tinyapp register page"](https://github.com/jhssttj/tinyapp/blob/master/docs/register.PNG?raw=true)
+!["Tinyapp URL main page"](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-page.PNG?raw=true)
+!["Tinyapp URL new page"](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-new.PNG?raw=true)
+!["Tinyapp URL edit page"](https://github.com/jhssttj/tinyapp/blob/master/docs/urls-edit.PNG?raw=true)
 
 ## Dependencies
 
