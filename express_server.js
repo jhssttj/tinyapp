@@ -49,9 +49,9 @@ function generateRandomString() {
   return result;
 }
 //Function to find email if in database
-const findUserByEmail = (email) => {
-  for (const userId in users) {
-    const userFromDb = users[userId];
+const findUserByEmail = (email, database) => {
+  for (const userId in database) {
+    const userFromDb = database[userId];
     if (userFromDb.email === email) {
       // we found our user
       return userId;
@@ -200,7 +200,7 @@ app.get("/urls/:id/delete", (req, res) => {
 //Put register info into database
 app.post("/register", (req, res) => {
   const userID = generateRandomString();
-  const currentUser = findUserByEmail(req.body.email);
+  const currentUser = findUserByEmail(req.body.email, users);
   let userObj = {};
   if (req.body.email === '' || req.body.password === '') {
     return res.status(400).send("Cannot have empty email/password input");
@@ -218,7 +218,7 @@ app.post("/register", (req, res) => {
 });
 //Login Button logs you in and redirect back to URL page
 app.post("/login", (req, res) => {
-  const currentUser = findUserByEmail(req.body.email);
+  const currentUser = findUserByEmail(req.body.email, users);
   if (!currentUser) {
     return res.status(403).send("Email cannot be found");
   }
