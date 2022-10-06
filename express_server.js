@@ -63,7 +63,7 @@ const urlsForUser = (id) => {
 app.get("/", (req, res) => {
   const templateVars = { userInfo: users[req.session.user_id] };
   if (req.session.user_id) {
-    return res.redirect("/urls")
+    return res.redirect("/urls");
   }
   res.render("login", templateVars);
 });
@@ -71,7 +71,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {urls: urlsForUser(req.session.user_id), userInfo: users[req.session.user_id]};
   if (!req.session.user_id) {
-    return res.status(401).render("login_error",templateVars)
+    return res.status(401).render("login_error",templateVars);
   }
   res.render("urls_index", templateVars);
 });
@@ -79,7 +79,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const templateVars = {userInfo: users[req.session.user_id]};
   if (!req.session.user_id) {
-    return res.redirect("/login")
+    return res.redirect("/login");
   }
   res.render("urls_new", templateVars);
 });
@@ -87,7 +87,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = { userInfo: users[req.session.user_id] };
   if (req.session.user_id) {
-    return res.redirect("/urls")
+    return res.redirect("/urls");
   }
   res.render("register", templateVars);
 });
@@ -95,13 +95,13 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = { userInfo: users[req.session.user_id] };
   if (req.session.user_id) {
-    return res.redirect("/urls")
+    return res.redirect("/urls");
   }
   res.render("login", templateVars);
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const specificURL = urlsForUser(req.session.user_id)
+  const specificURL = urlsForUser(req.session.user_id);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot access: Id does not exist");
   }
@@ -193,7 +193,7 @@ app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '') {
     return res.status(400).send("Cannot have empty email/password input");
   }
-  if(currentUser){
+  if (currentUser) {
     return res.status(400).send('Cannot register: Email already in use');
   }
   userObj.id = userID;
