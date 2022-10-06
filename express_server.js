@@ -145,6 +145,31 @@ app.post("/urls/:id", (req, res) => {
 });
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
+  const specificURL = urlsForUser(req.cookies["user_id"]);
+  if (!urlDatabase[req.params.id]) {
+    return res.status(404).send("Cannot delete Id:Id does not exist");
+  }
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("Cannot delete: Not logged in currently");
+  }
+  if (!specificURL[req.params.id]) {
+    return res.status(401).send("Unauthorized to delete: This URL doesn't belong to this account");
+  }
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+});
+//Delete page
+app.get("/urls/:id/delete", (req, res) => {
+  const specificURL = urlsForUser(req.cookies["user_id"]);
+  if (!urlDatabase[req.params.id]) {
+    return res.status(404).send("Cannot delete Id:Id does not exist");
+  }
+  if (!req.cookies["user_id"]) {
+    return res.status(401).send("Cannot delete: Not logged in currently");
+  }
+  if (!specificURL[req.params.id]) {
+    return res.status(401).send("Unauthorized to delete");
+  }
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
