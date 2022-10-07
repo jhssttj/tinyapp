@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { findUserByEmail } = require('../helpers.js');
+const { findUserByEmail, urlsForUser } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -15,6 +15,18 @@ const testUsers = {
   }
 };
 
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
+};
+
+
 describe('findUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = findUserByEmail("user@example.com", testUsers)
@@ -25,5 +37,18 @@ describe('findUserByEmail', function() {
     const user = findUserByEmail("doesntexist@example.com", testUsers)
     const expectedUserID = undefined;
     assert.equal(user, expectedUserID);
+  })
+});
+
+describe('urlsForUser', function() {
+  it('should return a object of url specific to user based on user Id and compare if their URL is there', function() {
+    const userURLs = urlsForUser("aJ48lW", urlDatabase)
+    const expectedURLs = "https://www.tsn.ca"
+    assert.equal(userURLs.b6UTxQ.longURL, expectedURLs);
+  });
+  it('should return undefined if a URl not bounded to the account is called for', function() {
+    const userURLs = urlsForUser("aJ48lW", urlDatabase)
+    const expectedURLs = undefined;
+    assert.equal(userURLs["nonboundedURL"], expectedURLs);
   })
 });
