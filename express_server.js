@@ -123,6 +123,9 @@ app.post("/urls", (req, res) => {
   if (!userId) {
     return res.status(401).send("You cannot shorten a URL link because you are not logged in");
   }
+  if (!req.body.longURL) {
+    return res.status(400).send("You cannot submit an empty link")
+  }
   //Create object for new url for the first time
   if (!urlDatabase[siteID]) {
     urlDatabase[siteID] = {};
@@ -145,6 +148,9 @@ app.post("/urls/:id", (req, res) => {
   }
   if (!specificURL[Id]) {
     return res.status(401).send("Unauthorized to edit: This URL code doesn't belong to this account");
+  }
+  if (!req.body.editURL) {
+    return res.status(400).send("You cannot submit an empty link")
   }
   urlDatabase[Id].longURL = updatedURL;
   res.redirect(`/urls/${Id}`);
