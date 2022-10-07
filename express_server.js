@@ -88,7 +88,7 @@ app.get("/login", (req, res) => {
 //Specific URL page where you can edit the url (Restriction applies based on logged in status)
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const Id = req.params.id
+  const Id = req.params.id;
   const specificURL = urlsForUser(userId, urlDatabase);
   if (!urlDatabase[Id]) {
     return res.status(404).send("Cannot access: Id does not exist");
@@ -124,12 +124,12 @@ app.post("/urls", (req, res) => {
     return res.status(401).send("You cannot shorten a URL link because you are not logged in");
   }
   if (!req.body.longURL) {
-    return res.status(400).send("You cannot submit an empty link")
+    return res.status(400).send("You cannot submit an empty link");
   }
   //Create object for new url for the first time
   if (!urlDatabase[siteID]) {
     urlDatabase[siteID] = {};
-  };
+  }
   urlDatabase[siteID].longURL = req.body.longURL;
   urlDatabase[siteID].userID = userId;
   res.redirect(`/urls/${siteID}`);
@@ -138,7 +138,7 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
   const Id = req.params.id;
-  const updatedURL = req.body.editURL
+  const updatedURL = req.body.editURL;
   const specificURL = urlsForUser(userId, urlDatabase);
   if (!urlDatabase[Id]) {
     return res.status(404).send("Cannot edit Id:Id does not exist");
@@ -150,7 +150,7 @@ app.post("/urls/:id", (req, res) => {
     return res.status(401).send("Unauthorized to edit: This URL code doesn't belong to this account");
   }
   if (!req.body.editURL) {
-    return res.status(400).send("You cannot submit an empty link")
+    return res.status(400).send("You cannot submit an empty link");
   }
   urlDatabase[Id].longURL = updatedURL;
   res.redirect(`/urls/${Id}`);

@@ -35,5 +35,5 @@ module.exports = {
   findUserByEmail,
   generateRandomString,
   urlsForUser
-}
+};
 
