@@ -21,25 +21,25 @@
 
     <% if(!userInfo){ %>
       <form class="form-inline" action="/login" method="GET">
-        <div class="form-group mb-2" style = "margin: 0 auto" >
+        <div class="form-group mb-2" style = "margin: 2px" >
           <label for="userInfo"></label>
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black' >Login</button>
         </div>
       </form>
       <form class="form-inline" action="/register" method="GET">
-        <div class="form-group mb-2" style = "margin: 0 auto" >
+        <div class="form-group mb-2" style = "margin: 2px" >
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Register</button>
         </div>
       </form>
     <% } else{ %>  
       <form class="form-inline" action="/logout" method="POST">
         <a>Logged in as: <%= userInfo.email %></a>
-        <div class="form-group mb-2" style = "margin: 0 auto" >
+        <div class="form-group mb-2" style = "margin: 2px" >
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Logout</button>
         </div>
       </form>
       <form class="form-inline" action="/register" method="GET">
-        <div class="form-group mb-2" style = "margin: 0 auto" >
+        <div class="form-group mb-2" style = "margin: 2px" >
           <button type="submit" class="btn btn-primary"style = 'color:black; background: rgba(0,0,0,0); border-color:black'>Register</button>
         </div>
       </form>
