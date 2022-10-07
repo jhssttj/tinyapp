@@ -1,6 +1,6 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
-const { findUserByEmail } = require('./helpers');
+const { findUserByEmail, generateRandomString, urlsForUser } = require('./helpers');
 const app = express();
 const bcrypt = require('bcryptjs');
 const PORT = 8080; // default port 8080
@@ -38,26 +38,7 @@ const users = {
     password: "dishwasher-funk",
   },
 };
-//Function to generate random 6 digit string
-function generateRandomString() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-}
 
-//Function to filter url based on unique user id
-const urlsForUser = (id) => {
-  let finalObj = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      finalObj[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return finalObj;
-};
 
 //Homepage: Directs to login page if not logged in or to URL page if logged in
 app.get("/", (req, res) => {
@@ -69,7 +50,7 @@ app.get("/", (req, res) => {
 });
 //Url Index Page: Shows all of the long and short URL and delete button
 app.get("/urls", (req, res) => {
-  const templateVars = {urls: urlsForUser(req.session.user_id), userInfo: users[req.session.user_id]};
+  const templateVars = {urls: urlsForUser(req.session.user_id, urlDatabase), userInfo: users[req.session.user_id]};
   if (!req.session.user_id) {
     return res.status(401).render("login_error",templateVars);
   }
@@ -101,7 +82,7 @@ app.get("/login", (req, res) => {
 });
 //Specific URL page
 app.get("/urls/:id", (req, res) => {
-  const specificURL = urlsForUser(req.session.user_id);
+  const specificURL = urlsForUser(req.session.user_id, urlDatabase);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot access: Id does not exist");
   }
@@ -142,7 +123,7 @@ app.post("/urls", (req, res) => {
 });
 //Once edited, update the long URL
 app.post("/urls/:id", (req, res) => {
-  const specificURL = urlsForUser(req.session.user_id);
+  const specificURL = urlsForUser(req.session.user_id, urlDatabase);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot edit Id:Id does not exist");
   }
@@ -157,7 +138,7 @@ app.post("/urls/:id", (req, res) => {
 });
 //Delete requested URL once the delete button is clicked
 app.post("/urls/:id/delete", (req, res) => {
-  const specificURL = urlsForUser(req.session.user_id);
+  const specificURL = urlsForUser(req.session.user_id, urlDatabase);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
@@ -172,7 +153,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 //Delete page
 app.get("/urls/:id/delete", (req, res) => {
-  const specificURL = urlsForUser(req.session.user_id);
+  const specificURL = urlsForUser(req.session.user_id, urlDatabase);
   if (!urlDatabase[req.params.id]) {
     return res.status(404).send("Cannot delete Id:Id does not exist");
   }
